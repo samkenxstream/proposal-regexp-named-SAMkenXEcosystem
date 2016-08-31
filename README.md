@@ -34,6 +34,8 @@ let {one, two} = /^(?<one>.*):(?<two>.*)$/.exec('foo:bar');
 console.log(`one: ${one}, two: ${two}`);  // prints one: foo, two: bar
 ```
 
+### Backreferences
+
 A named group can be accessed within a regular expression via the `\k<name>` construct. For example,
 
 ```js
@@ -49,6 +51,8 @@ let triplicate = /^(?<part>.*).\k<part>.\1$/u;
 duplicate.test('a*a*a'); // true
 duplicate.test('a*a*b'); // false
 ```
+
+### Replacement targets
 
 Named groups can be referenced from the replacement value passed to `String.prototype.replace` too. If the value is a string, named groups can be accessed using the `$<name>` syntax. For example:
 
