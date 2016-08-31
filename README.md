@@ -10,7 +10,7 @@ Named capture groups provide a nice solution for these issues.
 
 ## High Level API
 
-A capture group can be given a name using the `(?<name>...)` syntax. The regular expression for a date then can be written as `/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/`. Each name should be unique and follow the grammar for ECMAScript identifiers.
+A capture group can be given a name using the `(?<name>...)` syntax, for any identifer `name`. The regular expression for a date then can be written as `/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/`. Each name should be unique and follow the grammar for ECMAScript identifiers.
 
 Named groups can be accessed from properties of the regular expression result. Numbered references to the groups are also created, just as for non-named groups. For example:
 
@@ -50,17 +50,17 @@ duplicate.test('a*a*a'); // true
 duplicate.test('a*a*b'); // false
 ```
 
-Named groups can be referenced from the replacement value passed to `String.prototype.replace` too. If the value is a string, named groups can be accessed using the `${name}` syntax. For example:
+Named groups can be referenced from the replacement value passed to `String.prototype.replace` too. If the value is a string, named groups can be accessed using the `$<name>` syntax. For example:
 
  ```js
 let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/;
-let result = '2015-01-02'.replace(re, '${day}/${month}/${year}');
+let result = '2015-01-02'.replace(re, '$<day>/$<month>/$<year>');
 // result === '02/01/2015'
 ```
 
-Note that an ordinary string literal, not a template literal, is passed into `replace`, as that method will resolve the values of `day` etc rather than having them as local variables.
+Note that an ordinary string literal, not a template literal, is passed into `replace`, as that method will resolve the values of `day` etc rather than having them as local variables. An alternative would be to use `${day}` syntax (while remaining not a template string); this proposal uses `$<day>` to draw a parallel to the definition of the group and a distinction from template literals.
 
-If the value is a function, then the named groups can be accessed via a new parameter called `groups`. The new signature would be `function (matched, capture1, ..., captureN, position, S, groups)`.
+If the second argument to `String.prototype.replace` is a function, then the named groups can be accessed via a new parameter called `groups`. The new signature would be `function (matched, capture1, ..., captureN, position, S, groups)`. Named captures would still participate in numbering, as usual.
 
 ## Details
 
@@ -99,3 +99,7 @@ C# and VB.NET support named capture groups with the syntax `"(?<name>)"` as well
 ### PHP
 
 According to a [Stack Overflow post](http://stackoverflow.com/questions/6971287/named-capture-in-php-using-regex) and a [comment on php.net docs](http://php.net/manual/en/function.preg-match.php#89418), PHP has long supported named groups with the syntax `"(?P<foo>)"`, which is available as a property in the resulting match object.
+
+### Ruby [ref](https://ruby-doc.org/core-2.2.0/Regexp.html#class-Regexp-label-Capturing)
+
+Ruby's sytax is identical to .NET, with named capture groups with the syntax `"(?<name>)"` as well as `"(?'name')"` and backreferences with `"\k<name>"`.
