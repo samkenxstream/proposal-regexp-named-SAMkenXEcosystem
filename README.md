@@ -106,4 +106,4 @@ According to a [Stack Overflow post](http://stackoverflow.com/questions/6971287/
 
 ### Ruby [ref](https://ruby-doc.org/core-2.2.0/Regexp.html#class-Regexp-label-Capturing)
 
-Ruby's sytax is identical to .NET, with named capture groups with the syntax `"(?<name>)"` as well as `"(?'name')"` and backreferences with `"\k<name>"`.
+Ruby's syntax is identical to .NET, with named capture groups with the syntax `"(?<name>)"` as well as `"(?'name')"` and backreferences with `"\k<name>"`.
