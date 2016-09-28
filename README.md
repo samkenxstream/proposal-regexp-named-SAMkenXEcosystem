@@ -76,9 +76,9 @@ An alternative possibility would be to provide named matches in a new `groups` o
 
 ### Backwards compatibility of new syntax
 
-The syntax for creating a new named group, `/(?<name>)/`, is currently a syntax error in ECMAScript RegExps, so it can be added to all RegExps without ambiguity. However, the named backreference syntax, `/\k<foo>/`, is currently permitted in non-Unicode RegExps and matches the literal string `"k<foo>"`. In Unicode RegExps, such escapes are banned, however. Therefore, in this proposal, named backreferences are only permitted in Unicode RegExps.
+The syntax for creating a new named group, `/(?<name>)/`, is currently a syntax error in ECMAScript RegExps, so it can be added to all RegExps without ambiguity. However, the named backreference syntax, `/\k<foo>/`, is currently permitted in non-Unicode RegExps and matches the literal string `"k<foo>"`. In Unicode RegExps, such escapes are banned.
 
-An alternative possibility would be to only allow named capture groups in Unicode RegExps, to avoid the hazard of a user thinking they had support but not realizing that backreferences were not permitted.
+In this proposal, `\k<foo>` in non-Unicode RegExps will continue to match the literal string `"k<foo>"` *unless* the RegExp contains a named group, in which case it will match that group or be a syntax error, depending on whether or not the RegExp has a named group named `foo`. This does not affect existing code, since no currently valid RegExp can have a named group. It would be a refactoring hazard, although only for code which contained `\k` in a RegExp.
 
 ## Precedent in other programming languages
 
