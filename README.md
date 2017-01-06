@@ -80,9 +80,11 @@ An alternative possibility would be to provide named matches in a new `groups` o
 
 ### Backwards compatibility of new syntax
 
-The syntax for creating a new named group, `/(?<name>)/`, is currently a syntax error in ECMAScript RegExps, so it can be added to all RegExps without ambiguity. However, the named backreference syntax, `/\k<foo>/`, is currently permitted in non-Unicode RegExps and matches the literal string `"k<foo>"`. In Unicode RegExps, such escapes are banned.
+The syntax for creating a new named group, `/(?<name>)/`, is currently a syntax error in ECMAScript RegExps, so it could be added to all RegExps without ambiguity. However, the named backreference syntax, `/\k<foo>/`, is currently permitted in non-Unicode RegExps and matches the literal string `"k<foo>"`. In Unicode RegExps, such escapes are banned.
 
-In this proposal, `\k<foo>` in non-Unicode RegExps will continue to match the literal string `"k<foo>"` *unless* the RegExp contains a named group, in which case it will match that group or be a syntax error, depending on whether or not the RegExp has a named group named `foo`. This does not affect existing code, since no currently valid RegExp can have a named group. It would be a refactoring hazard, although only for code which contained `\k` in a RegExp.
+One alternative considered was to allow `\k<foo>` in non-Unicode RegExps will continue to match the literal string `"k<foo>"` *unless* the RegExp contains a named group, in which case it will match that group or be a syntax error, depending on whether or not the RegExp has a named group named `foo`. This would not affect existing code, since no currently valid RegExp can have a named group. It could be considered a slight refactoring hazard, although only for code which contained `\k` in a RegExp.
+
+However, this proposal restricts named capture groups, with or without backreferences, to Unicode RegExps. The restriction  simplifies both the specification and implementation, and it is hoped that this will encourage more people to use Unicode RegExps, the appropriate choice for most tasks.
 
 ## Precedent in other programming languages
 
@@ -111,3 +113,7 @@ According to a [Stack Overflow post](http://stackoverflow.com/questions/6971287/
 ### Ruby [ref](https://ruby-doc.org/core-2.2.0/Regexp.html#class-Regexp-label-Capturing)
 
 Ruby's syntax is identical to .NET, with named capture groups with the syntax `"(?<name>)"` as well as `"(?'name')"` and backreferences with `"\k<name>"`.
+
+## Draft specification
+
+[Draft spec](https://tc39.github.io/proposal-regexp-named-groups/)
