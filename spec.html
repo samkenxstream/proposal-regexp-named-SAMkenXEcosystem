@@ -20,7 +20,7 @@ contributors: Daniel Ehrenberg
           `.`
           `\` AtomEscape[?U]
           CharacterClass[?U]
-          `(` <ins>GroupSpecifier?</ins> Disjunction[?U] `)`
+          `(` <ins>GroupSpecifier</ins> Disjunction[?U] `)`
           `(` `?` `:` Disjunction[?U] `)`
 
         AtomEscape[U] ::
@@ -42,17 +42,24 @@ contributors: Daniel Ehrenberg
 <emu-clause id="sec-patterns-static-semantics-early-errors">
   <h1>Static Semantics: Early Errors (<a href="https://tc39.github.io/ecma262/#sec-patterns-static-semantics-early-errors">#sec-patterns-static-semantics-early-errors</a>)</h1>
   <ins class="block">
-    <emu-grammar>Atom :: `(` GroupSpecifier? Disjunction[?U] `)`</emu-grammar>
+    <emu-grammar>Atom : `(` GroupSpecifier Disjunction[?U] `)`</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the StringValue of <emu-nt>GroupSpecifier</emu-nt>'s inner <emu-nt>IdentifierName</emu-nt> is `"length"`, `"index"` or `"input"`.
+        It is a Syntax Error if |GroupSpecifier| contains an |IdentifierName| whose StringValue is `"length"`, `"index"` or `"input"`.
       </li>
     </ul>
 
-    <emu-grammar>Pattern :: Disjunction</emu-grammar>
+    <emu-grammar>Pattern : Disjunction</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if <emu-nt>Pattern</emu-nt> contains multiple <emu-nt>IdentifierName</emu-nt>s with the same StringValue.
+        It is a Syntax Error if |Pattern| contains multiple |GroupSpecifier|s whose enclosed |IdentifierName|s have the same StringValue.
+      </li>
+    </ul>
+
+    <emu-grammar>AtomEscape[U] : [+U] `k` GroupName</emu-grammar>
+    <ul>
+      <li>
+        It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |IdentiferName| whose StringValue equals the StringValue of the |IdentierName| of this production's |GroupName|.
       </li>
     </ul>
   </ins>
@@ -82,9 +89,9 @@ contributors: Daniel Ehrenberg
   <ins class="block">
   <p>The production <emu-grammar>AtomEscape :: `k` GroupName</emu-grammar> evaluates as follows:</p>
   <emu-alg>
-      1. Search the encosing RegExp for an instance of a <emu-nt>GroupSpecifier</emu-nt> for an <emu-nt>IdentifierName</emu-nt> which has a StringValue equal to the StringValue of the <emu-nt>IdentifierName</emu-nt> contained in <emu-nt>GroupName</emu-nt>.
-      1. If no such <emu-nt>GroupSpecifier</emu-nt> is found, throw a *SyntaxError* exception.
-      1. Let _parenIndex_ be the number of left capturing parentheses in the entire regular expression that occur to the left of the located |GroupSpecifier|. This is the total number of times the <emu-grammar>Atom :: `(` GroupSpecifier? Disjunction `)`</emu-grammar> production is expanded prior to that production's |Term| plus the total number of <emu-grammar>Atom :: `(` GroupSpecifier? Disjunction `)`</emu-grammar> productions enclosing this |Term|.
+      1. Search the enclosing RegExp for an instance of a |GroupSpecifier| for an |IdentifierName| which has a StringValue equal to the StringValue of the |IdentifierName| contained in |GroupName|.
+      1. Assert: A unique such |GroupSpecifier| is found.
+      1. Let _parenIndex_ be the number of left capturing parentheses in the entire regular expression that occur to the left of the located |GroupSpecifier|. This is the total number of times the <emu-grammar>Atom :: `(` GroupSpecifier Disjunction `)`</emu-grammar> production is expanded prior to that production's |Term| plus the total number of <emu-grammar>Atom :: `(` GroupSpecifier Disjunction `)`</emu-grammar> productions enclosing this |Term|.
       1. Call BackreferenceMatcher(_parenIndex_) and return its Matcher result.
     </emu-alg>
   </ins>
