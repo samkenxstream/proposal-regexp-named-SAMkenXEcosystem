@@ -15,23 +15,23 @@ contributors: Daniel Ehrenberg
   <h1>Patterns (<a href="https://tc39.github.io/ecma262/#sec-patterns">#sec-patterns</a>)</h1>
   <h2>Syntax</h2>
   <emu-grammar>
-        Atom[U] ::
+        Atom[U<ins>,N</ins>] ::
           PatternCharacter
           `.`
-          `\` AtomEscape[?U]
-          CharacterClass[?U]
-          `(` <ins>GroupSpecifier</ins> Disjunction[?U] `)`
-          `(` `?` `:` Disjunction[?U] `)`
+          `\` AtomEscape[?U<ins>, ?N</ins>]
+          CharacterClass[?U<ins>, ?N</ins>]
+          `(` <ins>GroupSpecifier</ins> Disjunction[?U<ins>, ?N</ins>] `)`
+          `(` `?` `:` Disjunction[?U<ins>, ?N</ins>] `)`
 
-        AtomEscape[U] ::
+        AtomEscape[U<ins>, N</ins>] ::
           DecimalEscape
           CharacterClassEscape
           CharacterEscape[?U]
-          <ins>[+U] `k` GroupName</ins>
+          <ins>[+N] `k` GroupName</ins>
 
         <ins>GroupSpecifier ::
           [empty]
-          [+U] `?` GroupName
+          [+N] `?` GroupName
 
         GroupName ::
           `<` IdentifierName `>`</ins>
@@ -42,21 +42,21 @@ contributors: Daniel Ehrenberg
 <emu-clause id="sec-patterns-static-semantics-early-errors">
   <h1>Static Semantics: Early Errors (<a href="https://tc39.github.io/ecma262/#sec-patterns-static-semantics-early-errors">#sec-patterns-static-semantics-early-errors</a>)</h1>
   <ins class="block">
-    <emu-grammar>Atom : `(` GroupSpecifier Disjunction[?U] `)`</emu-grammar>
+    <emu-grammar>Atom :: `(` GroupSpecifier Disjunction[?U] `)`</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if |GroupSpecifier| contains an |IdentifierName| whose StringValue is `"length"`, `"index"` or `"input"`.
       </li>
     </ul>
 
-    <emu-grammar>Pattern : Disjunction</emu-grammar>
+    <emu-grammar>Pattern :: Disjunction</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if |Pattern| contains multiple |GroupSpecifier|s whose enclosed |IdentifierName|s have the same StringValue.
       </li>
     </ul>
 
-    <emu-grammar>AtomEscape[U] : [+U] `k` GroupName</emu-grammar>
+    <emu-grammar>AtomEscape[U] :: [+U] `k` GroupName</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |IdentiferName| whose StringValue equals the StringValue of the |IdentierName| of this production's |GroupName|.
@@ -95,6 +95,30 @@ contributors: Daniel Ehrenberg
       1. Call BackreferenceMatcher(_parenIndex_) and return its Matcher result.
     </emu-alg>
   </ins>
+</emu-clause>
+
+<emu-clause id="sec-regexpinitialize" aoid="RegExpInitialize">
+  <h1>Runtime Semantics: RegExpInitialize ( _obj_, _pattern_, _flags_ )</h1>
+  <p>When the abstract operation RegExpInitialize with arguments _obj_, _pattern_, and _flags_ is called, the following steps are taken:</p>
+  <emu-alg>
+    1. If _pattern_ is *undefined*, let _P_ be the empty String.
+    1. Else, let _P_ be ? ToString(_pattern_).
+    1. If _flags_ is *undefined*, let _F_ be the empty String.
+    1. Else, let _F_ be ? ToString(_flags_).
+    1. If _F_ contains any code unit other than `"g"`, `"i"`, `"m"`, `"u"`, or `"y"` or if it contains the same code unit more than once, throw a *SyntaxError* exception.
+    1. If _F_ contains `"u"`, let _BMP_ be *false*; else let _BMP_ be *true*.
+    1. If _BMP_ is *true*, then
+      1. Parse _P_ using the grammars in <emu-xref href="#sec-patterns"></emu-xref> and interpreting each of its 16-bit elements as a Unicode BMP code point. UTF-16 decoding is not applied to the elements. The goal symbol for the parse is |Pattern[~U<ins>, ~N</ins>]|. <ins>If the result of parsing contains a |GroupName|, reparse with the goal symbol |Pattern[~U, +N]| and use this result instead.</ins> Throw a *SyntaxError* exception if _P_ did not conform to the grammar in either parsing attempt, if any elements of _P_ were not matched by the parse, or if any Early Error conditions exist.
+      1. Let _patternCharacters_ be a List whose elements are the code unit elements of _P_.
+    1. Else,
+      1. Parse _P_ using the grammars in <emu-xref href="#sec-patterns"></emu-xref> and interpreting _P_ as UTF-16 encoded Unicode code points (<emu-xref href="#sec-ecmascript-language-types-string-type"></emu-xref>). The goal symbol for the parse is |Pattern[+U<ins>, +N</ins>]|. Throw a *SyntaxError* exception if _P_ did not conform to the grammar, if any elements of _P_ were not matched by the parse, or if any Early Error conditions exist.
+      1. Let _patternCharacters_ be a List whose elements are the code points resulting from applying UTF-16 decoding to _P_'s sequence of elements.
+    1. Set _obj_.[[OriginalSource]] to _P_.
+    1. Set _obj_.[[OriginalFlags]] to _F_.
+    1. Set _obj_.[[RegExpMatcher]] to the internal procedure that evaluates the above parse of _P_ by applying the semantics provided in <emu-xref href="#sec-pattern-semantics"></emu-xref> using _patternCharacters_ as the pattern's List of |SourceCharacter| values and _F_ as the flag parameters.
+    1. Perform ? Set(_obj_, `"lastIndex"`, 0, *true*).
+    1. Return _obj_.
+  </emu-alg>
 </emu-clause>
 
 
