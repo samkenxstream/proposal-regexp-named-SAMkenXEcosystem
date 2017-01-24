@@ -281,7 +281,7 @@ contributors: Daniel Ehrenberg
           <ins>`$&lt;`</ins>
         </td>
         <td>
-          <ins>If _namedCaptures_ is *undefined*, the replacement text is the literal string `$&lt;`. Otherwise, scan until the next `>`, throwing a *SyntaxError* exception if one is not found, and let the enclosed substring be _groupName_. If _groupName_ does not match the |IdentifierName| grammar, throw a *SyntaxError* exception. . Let _capture_ be ? Get(_namedCaptures_, _groupName_). If _capture_ is *undefined*, replace the text through `>` with the empty string. Otherwise, replace the text through this following `>` with ? ToString(_capture_).</ins>
+          <ins>If _namedCaptures_ is *undefined*, the replacement text is the literal string `$&lt;`. Otherwise, scan until the next `>`, throwing a *SyntaxError* exception if one is not found, and let the enclosed substring be _groupName_. If _groupName_ does not match the |IdentifierName| grammar, throw a *SyntaxError* exception. Let _capture_ be ? Get(_namedCaptures_, _groupName_). If _capture_ is *undefined*, replace the text through `>` with the empty string. Otherwise, replace the text through this following `>` with ? ToString(_capture_).</ins>
         </td>
       </tr>
       <tr>
