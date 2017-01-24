@@ -178,3 +178,124 @@ contributors: Daniel Ehrenberg
     1. Return _A_.
   </emu-alg>
 </emu-clause>
+
+<emu-clause id="sec-getsubstitution" aoid="GetSubstitution">
+  <h1>Runtime Semantics: GetSubstitution( _matched_, _str_, _position_, _captures_, _replacement_ )</h1>
+  <emu-table id="table-45" caption="Replacement Text Symbol Substitutions">
+    <table>
+      <tbody>
+      <tr>
+        <th>
+          Code units
+        </th>
+        <th>
+          Unicode Characters
+        </th>
+        <th>
+          Replacement text
+        </th>
+      </tr>
+      <tr>
+        <td>
+          0x0024, 0x0024
+        </td>
+        <td>
+          `$$`
+        </td>
+        <td>
+          `$`
+        </td>
+      </tr>
+      <tr>
+        <td>
+          0x0024, 0x0026
+        </td>
+        <td>
+          `$&amp;`
+        </td>
+        <td>
+          _matched_
+        </td>
+      </tr>
+      <tr>
+        <td>
+          0x0024, 0x0060
+        </td>
+        <td>
+          <code>$`</code>
+        </td>
+        <td>
+          If _position_ is 0, the replacement is the empty String. Otherwise the replacement is the substring of _str_ that starts at index 0 and whose last code unit is at index _position_ - 1.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          0x0024, 0x0027
+        </td>
+        <td>
+          `$'`
+        </td>
+        <td>
+          If _tailPos_ &ge; _stringLength_, the replacement is the empty String. Otherwise the replacement is the substring of _str_ that starts at index _tailPos_ and continues to the end of _str_.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          0x0024, N
+          <br>
+          Where
+          <br>
+          0x0031 &le; N &le; 0x0039
+        </td>
+        <td>
+          `$n` where
+          <br>
+          `n` is one of `1 2 3 4 5 6 7 8 9` and `$n` is not followed by a decimal digit
+        </td>
+        <td>
+          The _n_<sup>th</sup> element of _captures_, where _n_ is a single digit in the range 1 to 9. If _n_&le;_m_ and the _n_<sup>th</sup> element of _captures_ is *undefined*, use the empty String instead. If _n_&gt;_m_, the result is implementation-defined.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          0x0024, N, N
+          <br>
+          Where
+          <br>
+          0x0030 &le; N &le; 0x0039
+        </td>
+        <td>
+          `$nn` where
+          <br>
+          `n` is one of `0 1 2 3 4 5 6 7 8 9`
+        </td>
+        <td>
+          The _nn_<sup>th</sup> element of _captures_, where _nn_ is a two-digit decimal number in the range 01 to 99. If _nn_&le;_m_ and the _nn_<sup>th</sup> element of _captures_ is *undefined*, use the empty String instead. If _nn_ is 00 or _nn_&gt;_m_, the result is implementation-defined.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <ins>0x0024, 0x003C</ins>
+        </td>
+        <td>
+          <ins>`$&lt;`</ins>
+        </td>
+        <td>
+          <ins>If the regular expression was parsed with |[~N]|, the replacement text is the literal string `$&lt;`. Otherwise, scan until the next `>`, throwing a *SyntaxError* exception if one is not found, and let the enclosed substring be _groupName_. If _groupName_ is not an ....</ins>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          0x0024
+        </td>
+        <td>
+          `$` in any context that does not match any of the above.
+        </td>
+        <td>
+          `$`
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </emu-table>
+</emu-clause>
