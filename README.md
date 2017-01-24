@@ -12,14 +12,14 @@ Named capture groups provide a nice solution for these issues.
 
 A capture group can be given a name using the `(?<name>...)` syntax, for any identifier `name`. The regular expression for a date then can be written as `/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/u`. Each name should be unique and follow the grammar for ECMAScript IdentifierName.
 
-Named groups can be accessed from properties of the regular expression result. Numbered references to the groups are also created, just as for non-named groups. For example:
+Named groups can be accessed from properties of a `groups` property of the regular expression result. Numbered references to the groups are also created, just as for non-named groups. For example:
 
 ```js
 let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/u;
 let result = re.exec('2015-01-02');
-// result.year === '2015';
-// result.month === '01';
-// result.day === '02';
+// result.groups.year === '2015';
+// result.groups.month === '01';
+// result.groups.day === '02';
 
 // result[0] === '2015-01-02';
 // result[1] === '2015';
@@ -30,7 +30,7 @@ let result = re.exec('2015-01-02');
 The interface interacts nicely with destructuring, as in the following example:
 
 ```js
-let {one, two} = /^(?<one>.*):(?<two>.*)$/u.exec('foo:bar');
+let {groups: {one, two}} = /^(?<one>.*):(?<two>.*)$/u.exec('foo:bar');
 console.log(`one: ${one}, two: ${two}`);  // prints one: foo, two: bar
 ```
 
@@ -70,13 +70,7 @@ If the second argument to `String.prototype.replace` is a function, then the nam
 
 ### Overlapping group names
 
-RegExp result objects have some non-numerical properties already, which named capture groups may overlap with, namely `length`, `index` and `input`. In this proposal, to avoid ambiguity and edge cases around overlapping names, RegExps with such properties would be an Early Error, rejected when the RegExp is parsed. The grammatical production would be similar to `Identifier`, except leaving out these three names rather than `ReservedWords`.
-
-The hazard with this option is that it does not scale to adding more ordinary properties to the output of `exec`. However, there are a few reasons why this is unlikely to happen:
-- ES2015 makes `exec` a protocol which other RegExp subclasses/analogues can implement. Adding another expected output would be a change in the protocol.
-- It would be hard to add a new required output without producing a difficult-to-avoid performance degradation; therefore, additional pieces of information might be better added through other APIs.
-
-An alternative possibility would be to provide named matches in a new `groups` object which is a property of the match result object.
+RegExp result objects have some non-numerical properties already, which named capture groups may overlap with, namely `length`, `index` and `input`. In this proposal, to avoid ambiguity and edge cases around overlapping names, named group properties are placed on a separate `groups` object which is a property of the match object. This solution will permit additional properties to be placed on the result of `exec` in future ECMAScript versions without creating any web compatibility hazards.
 
 ### Backwards compatibility of new syntax
 

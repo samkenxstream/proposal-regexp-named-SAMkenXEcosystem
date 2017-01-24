@@ -42,13 +42,6 @@ contributors: Daniel Ehrenberg
 <emu-clause id="sec-patterns-static-semantics-early-errors">
   <h1>Static Semantics: Early Errors (<a href="https://tc39.github.io/ecma262/#sec-patterns-static-semantics-early-errors">#sec-patterns-static-semantics-early-errors</a>)</h1>
   <ins class="block">
-    <emu-grammar>Atom :: `(` GroupSpecifier Disjunction[?U] `)`</emu-grammar>
-    <ul>
-      <li>
-        It is a Syntax Error if |GroupSpecifier| contains an |IdentifierName| whose StringValue is `"length"`, `"index"` or `"input"`.
-      </li>
-    </ul>
-
     <emu-grammar>Pattern :: Disjunction</emu-grammar>
     <ul>
       <li>
@@ -166,6 +159,9 @@ contributors: Daniel Ehrenberg
     1. Perform ! CreateDataProperty(_A_, `"input"`, _S_).
     1. Let _matchedSubstr_ be the matched substring (i.e. the portion of _S_ between offset _lastIndex_ inclusive and offset _e_ exclusive).
     1. Perform ! CreateDataProperty(_A_, `"0"`, _matchedSubstr_).
+    1. <ins>If _R_ contains any |GroupName|,</ins>
+      1. <ins>Let _groups_ be ObjectCreate(*null*).</ins>
+      1. <ins>Perform ! CreateDataProperty(_A_, `"groups"`, _groups_).</ins>
     1. For each integer _i_ such that _i_ &gt; 0 and _i_ &le; _n_
       1. Let _captureI_ be _i_<sup>th</sup> element of _r_'s _captures_ List.
       1. If _captureI_ is *undefined*, let _capturedValue_ be *undefined*.
@@ -178,7 +174,7 @@ contributors: Daniel Ehrenberg
       1. Perform ! CreateDataProperty(_A_, ! ToString(_i_), _capturedValue_).
       1. <ins>If the _i_th capture of _R_ was defined with a |GroupName|,</ins>
         1. <ins>Let _s_ be the StringValue of the corresponding |IdentifierName|.</ins>
-        1. <ins>Perform ! CreateDataProperty(_A_, _s_, _capturedValue_).</ins>
+        1. <ins>Perform ! CreateDataProperty(_groups_, _s_, _capturedValue_).</ins>
     1. Return _A_.
   </emu-alg>
 </emu-clause>
