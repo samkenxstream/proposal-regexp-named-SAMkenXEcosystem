@@ -31,7 +31,7 @@ contributors: Daniel Ehrenberg
 
         <ins>GroupSpecifier ::
           [empty]
-          [+N] `?` GroupName
+          `?` GroupName
 
         GroupName ::
           `<` IdentifierName `>`</ins>
@@ -49,7 +49,7 @@ contributors: Daniel Ehrenberg
       </li>
     </ul>
 
-    <emu-grammar>AtomEscape[U] :: [+U] `k` GroupName</emu-grammar>
+    <emu-grammar>AtomEscape[U] :: [+N] `k` GroupName</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |IdentiferName| whose StringValue equals the StringValue of the |IdentierName| of this production's |GroupName|.
@@ -80,7 +80,7 @@ contributors: Daniel Ehrenberg
 <emu-clause id="sec-atomescape">
   <h1>AtomEscape</h1>
   <ins class="block">
-  <p>The production <emu-grammar>AtomEscape :: `k` GroupName</emu-grammar> evaluates as follows:</p>
+  <p>The production <emu-grammar>AtomEscape[U] :: [+N] `k` GroupName</emu-grammar> evaluates as follows:</p>
   <emu-alg>
       1. Search the enclosing RegExp for an instance of a |GroupSpecifier| for an |IdentifierName| which has a StringValue equal to the StringValue of the |IdentifierName| contained in |GroupName|.
       1. Assert: A unique such |GroupSpecifier| is found.
