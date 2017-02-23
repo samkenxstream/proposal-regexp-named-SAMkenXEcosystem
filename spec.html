@@ -350,9 +350,9 @@ contributors: Daniel Ehrenberg
       1. If _functionalReplace_ is *true*, then
         1. Let _replacerArgs_ be &laquo; _matched_ &raquo;.
         1. Append in list order the elements of _captures_ to the end of the List _replacerArgs_.
-        1. Append _position_ and _S_ as the <del>last</del> two elements of _replacerArgs_.
         1. <ins>If _namedCaptures_ is not *undefined*,</ins>
-          1. <ins>Append _namedCaptures_ as the last element of _replacerArgs_.</ins>
+          1. <ins>Append _namedCaptures_ as the third-to-last element of _replacerArgs_.</ins>
+        1. Append _position_ and _S_ as the last two elements of _replacerArgs_.
         1. Let _replValue_ be ? Call(_replaceValue_, *undefined*, _replacerArgs_).
         1. Let _replacement_ be ? ToString(_replValue_).
       1. Else,
