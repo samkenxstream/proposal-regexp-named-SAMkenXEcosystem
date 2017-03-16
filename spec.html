@@ -366,3 +366,89 @@ contributors: Daniel Ehrenberg
   </emu-alg>
   <p>The value of the `name` property of this function is `"[Symbol.replace]"`.</p>
 </emu-clause>
+
+<emu-annex id="annex-b-grammar">
+      <h1>Regular Expressions Patterns</h1>
+      <p>The syntax of <emu-xref href="#sec-patterns"></emu-xref> is modified and extended as follows. These changes introduce ambiguities that are broken by the ordering of grammar productions and by contextual information. When parsing using the following grammar, each alternative is considered only if previous production alternatives do not match.</p>
+      <p>This alternative pattern grammar and semantics only changes the syntax and semantics of BMP patterns. The following grammar extensions include productions parameterized with the [U] parameter. However, none of these extensions change the syntax of Unicode patterns recognized when parsing with the [U] parameter present on the goal symbol.</p>
+      <h2>Syntax</h2>
+      <emu-grammar>
+        Term[U<ins>,N</ins>] ::
+          [+U] Assertion[+U<ins>, ?N</ins>]
+          [+U] Atom[+U<ins>, ?N</ins>]
+          [+U] Atom[+U<ins>, ?N</ins>] Quantifier
+          [~U] QuantifiableAssertion Quantifier
+          [~U] Assertion[~U<ins>, ?N</ins>]
+          [~U] ExtendedAtom<ins>[?N]</ins> Quantifier
+          [~U] ExtendedAtom<ins>[?N]</ins>
+
+        Assertion[U<ins>,N</ins>] ::
+          `^`
+          `$`
+          `\` `b`
+          `\` `B`
+          [+U] `(` `?` `=` Disjunction[+U<ins>, ?N</ins>] `)`
+          [+U] `(` `?` `!` Disjunction[+U<ins>, ?N</ins>] `)`
+          [~U] QuantifiableAssertion<ins>[N]</ins>
+
+        QuantifiableAssertion<ins>[N]</ins> ::
+          `(` `?` `=` Disjunction[~U<ins>, ?N</ins>] `)`
+          `(` `?` `!` Disjunction[~U<ins>, ?N</ins>] `)`
+
+        ExtendedAtom<ins>[N]</ins> ::
+          `.`
+          `\` AtomEscape[~U<ins>, ?N</ins>]
+          CharacterClass[~U<ins>, ?N</ins>]
+          `(` Disjunction[~U<ins>, ?N</ins>] `)`
+          `(` `?` `:` Disjunction[~U<ins>, ?N</ins>] `)`
+          InvalidBracedQuantifier
+          ExtendedPatternCharacter
+
+        InvalidBracedQuantifier ::
+          `{` DecimalDigits `}`
+          `{` DecimalDigits `,` `}`
+          `{` DecimalDigits `,` DecimalDigits `}`
+
+        ExtendedPatternCharacter ::
+          SourceCharacter but not one of `^` `$` `.` `*` `+` `?` `(` `)` `[` `|`
+
+        AtomEscape[U<ins>,N</ins>] ::
+          [+U] DecimalEscape
+          [~U] DecimalEscape [> but only if the integer value of |DecimalEscape| is &lt;= _NcapturingParens_]
+          CharacterClassEscape
+          CharacterEscape[~U<ins>, ?N</ins>]
+
+        CharacterEscape[U<ins>, N</ins>] ::
+          ControlEscape
+          `c` ControlLetter
+          `0` [lookahead &lt;! DecimalDigit]
+          HexEscapeSequence
+          RegExpUnicodeEscapeSequence[?U]
+          [~U] LegacyOctalEscapeSequence
+          IdentityEscape[?U<ins>, ?N</ins>]
+
+        IdentityEscape[U<ins>, N</ins>] ::
+          [+U] SyntaxCharacter
+          [+U] `/`
+          [~U] <del>SourceCharacter but not `c`</del><ins>SourceCharacter but not `c` or `k`</ins>
+
+        <ins>SourceCharacterIdentityEscape[N] ::
+          [~N] SourceCharacter but not `c`
+          [+N] SourceCharacter but not `c` or `k`
+        </ins>
+
+        ClassEscape[U<ins>, N</ins>] ::
+          `b`
+          [+U] `-`
+          [~U] `c` ClassControlLetter
+          CharacterClassEscape
+          CharacterEscape[?U<ins>, ?N</ins>]
+
+        ClassControlLetter ::
+          DecimalDigit
+          `_`
+      </emu-grammar>
+      <emu-note>
+        <p>When the same left hand sides occurs with both [+U] and [\~U] guards it is to control the disambiguation priority.</p>
+      </emu-note>
+</emu-annex>
