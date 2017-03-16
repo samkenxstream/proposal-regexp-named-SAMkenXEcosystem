@@ -430,7 +430,8 @@ contributors: Daniel Ehrenberg
         IdentityEscape[U<ins>, N</ins>] ::
           [+U] SyntaxCharacter
           [+U] `/`
-          [~U] <del>SourceCharacter but not `c`</del><ins>SourceCharacter but not `c` or `k`</ins>
+          <del>[~U] SourceCharacter but not `c`</del>
+          <ins>[~U] SourceCharacterIdentityEscape[?N]</ins>
 
         <ins>SourceCharacterIdentityEscape[N] ::
           [~N] SourceCharacter but not `c`
