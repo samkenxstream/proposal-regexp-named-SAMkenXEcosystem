@@ -1,5 +1,7 @@
 # RegExp Named Capture Groups
 
+Stage 3, champion Daniel Ehrenberg (Igalia)
+
 ## Introduction
 
 Numbered capture groups allow one to refer to certain portions of a string that a regular expression matches. Each capture group is assigned a unique number and can be referenced using that number, but this can make a regular expression hard to grasp and refactor.
