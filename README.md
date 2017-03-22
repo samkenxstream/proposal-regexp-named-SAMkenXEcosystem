@@ -70,7 +70,7 @@ If the second argument to `String.prototype.replace` is a function, then the nam
 let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/u;
 let result = '2015-01-02'.replace(re, (...args) => {
   let {day, month, year} = args[args.length - 1];
-  return `${day}/${month}/${year}'
+  return `${day}/${month}/${year}`;
 });
 // result === '02/01/2015'
 ```
