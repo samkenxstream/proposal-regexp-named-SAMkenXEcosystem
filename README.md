@@ -64,7 +64,16 @@ let result = '2015-01-02'.replace(re, '$<day>/$<month>/$<year>');
 
 Note that an ordinary string literal, not a template literal, is passed into `replace`, as that method will resolve the values of `day` etc rather than having them as local variables. An alternative would be to use `${day}` syntax (while remaining not a template string); this proposal uses `$<day>` to draw a parallel to the definition of the group and a distinction from template literals.
 
-If the second argument to `String.prototype.replace` is a function, then the named groups can be accessed via a new parameter called `groups`. The new signature would be `function (matched, capture1, ..., captureN, position, S, groups)`. Named captures would still participate in numbering, as usual.
+If the second argument to `String.prototype.replace` is a function, then the named groups can be accessed via a new parameter called `groups`. The new signature would be `function (matched, capture1, ..., captureN, position, S, groups)`. Named captures would still participate in numbering, as usual. For example:
+
+ ```js
+let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/u;
+let result = '2015-01-02'.replace(re, (...args) => {
+  let {day, month, year} = args[args.length - 1];
+  return `${day}/${month}/${year}'
+});
+// result === '02/01/2015'
+```
 
 ## Details
 
