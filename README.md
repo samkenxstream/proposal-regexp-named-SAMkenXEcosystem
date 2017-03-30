@@ -50,8 +50,8 @@ Named references can also be used simultaneously with numbered references.
 
 ```js
 let triplicate = /^(?<part>.*).\k<part>.\1$/u;
-duplicate.test('a*a*a'); // true
-duplicate.test('a*a*b'); // false
+triplicate.test('a*a*a'); // true
+triplicate.test('a*a*b'); // false
 ```
 
 ### Replacement targets
