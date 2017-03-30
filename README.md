@@ -83,6 +83,8 @@ let result = '2015-01-02'.replace(re, (...args) => {
 
 RegExp result objects have some non-numerical properties already, which named capture groups may overlap with, namely `length`, `index` and `input`. In this proposal, to avoid ambiguity and edge cases around overlapping names, named group properties are placed on a separate `groups` object which is a property of the match object. This solution will permit additional properties to be placed on the result of `exec` in future ECMAScript versions without creating any web compatibility hazards.
 
+The groups object is only created for RegExps with named groups. It does not include numbered group properties, only the named ones. Properties are created on the `groups` object for all groups which are mentioned in the RegExp; if they are not encountered in the match, the value is `undefined`.
+
 ### Backwards compatibility of new syntax
 
 The syntax for creating a new named group, `/(?<name>)/`, is currently a syntax error in ECMAScript RegExps, so it can be added to all RegExps without ambiguity. However, the named backreference syntax, `/\k<foo>/`, is currently permitted in non-Unicode RegExps and matches the literal string `"k<foo>"`. In Unicode RegExps, such escapes are banned.
