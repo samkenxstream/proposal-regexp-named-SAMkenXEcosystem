@@ -27,14 +27,32 @@ contributors: Daniel Ehrenberg
           DecimalEscape
           CharacterClassEscape
           CharacterEscape[?U]
-          <ins>[+N] `k` GroupName</ins>
+          <ins>[+N] `k` GroupName[?U]</ins>
 
-        <ins>GroupSpecifier ::
+        <ins>GroupSpecifier[U] ::
           [empty]
-          `?` GroupName
+          `?` GroupName[?U]
 
-        GroupName ::
-          `<` IdentifierName `>`</ins>
+        GroupName[U] ::
+          `<` RegExpIdentifierName[?U] `>`
+
+        RegExpIdentifierName[U] ::
+          RegExpIdentifierStart[?U]
+          RegExpIdentifierName[U] RegExpIdentifierPart[?U]
+
+        RegExpIdentifierStart[U] ::
+          UnicodeIDStart
+          `$`
+          `_`
+          `\` RegExpUnicodeEscapeSequence[?U]
+
+        RegExpIdentifierPart[U] ::
+          UnicodeIDContinue
+          `$`
+          `_`
+          `\` RegExpUnicodeEscapeSequence[?U]
+          &lt;ZWNJ&gt;
+          &lt;ZWJ&gt;</ins>
   </emu-grammar>
 </emu-clause>
 
@@ -45,17 +63,43 @@ contributors: Daniel Ehrenberg
     <emu-grammar>Pattern :: Disjunction</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if |Pattern| contains multiple |GroupSpecifier|s whose enclosed |IdentifierName|s have the same StringValue.
+        It is a Syntax Error if |Pattern| contains multiple |GroupSpecifier|s whose enclosed |RegExpIdentifierName|s have the same StringValue.
       </li>
     </ul>
 
     <emu-grammar>AtomEscape[U] :: [+N] `k` GroupName</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |IdentiferName| whose StringValue equals the StringValue of the |IdentifierName| of this production's |GroupName|.
+        It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |IdentiferName| whose StringValue equals the StringValue of the |RegExpIdentifierName| of this production's |GroupName|.
+      </li>
+    </ul>
+
+    <emu-grammar>RegExpIdentifierStart[U] :: `\` RegExpUnicodeEscapeSequence[?U]</emu-grammar>
+    <ul>
+      <li>
+        It is a Syntax Error if SV(|RegExpUnicodeEscapeSequence|) is none of `"$"`, or `"_"`, or the UTF16Encoding of a code point matched by the |UnicodeIDStart| lexical grammar production.
+      </li>
+    </ul>
+    <emu-grammar>RegExpIdentifierPart[U] :: `\` RegExpUnicodeEscapeSequence[?U]</emu-grammar>
+    <ul>
+      <li>
+        It is a Syntax Error if SV(|RegExpUnicodeEscapeSequence|) is none of `"$"`, or `"_"`, or the UTF16Encoding of either &lt;ZWNJ&gt; or &lt;ZWJ&gt;, or the UTF16Encoding of a Unicode code point that would be matched by the |UnicodeIDContinue| lexical grammar production.
       </li>
     </ul>
   </ins>
+</emu-clause>
+
+<emu-clause id="sec-regexp-identifier-names-static-semantics-stringvalue">
+  <h1>Static Semantics: StringValue</h1>
+  <emu-see-also-para op="StringValue"></emu-see-also-para>
+  <emu-grammar>
+    RegExpIdentifierName[U] ::
+      RegExpIdentifierStart[?U]
+      RegExpIdentifierName[?U] RegExpIdentifierPart[?U]
+  </emu-grammar>
+  <emu-alg>
+    1. Return the String value consisting of the sequence of code units corresponding to |RegExpIdentifierName|. In determining the sequence any occurrences of `\\` |RegExpUnicodeEscapeSequence| are first replaced with the code point represented by the |RegExpUnicodeEscapeSequence| and then the code points of the entire |RegExpIdentifierName| are converted to code units by UTF16Encoding each code point.
+  </emu-alg>
 </emu-clause>
 
 <emu-clause id="sec-backreference-matcher" aoid="BackreferenceMatcher">
@@ -82,7 +126,7 @@ contributors: Daniel Ehrenberg
   <ins class="block">
   <p>The production <emu-grammar>AtomEscape[U] :: [+N] `k` GroupName</emu-grammar> evaluates as follows:</p>
   <emu-alg>
-      1. Search the enclosing RegExp for an instance of a |GroupSpecifier| for an |IdentifierName| which has a StringValue equal to the StringValue of the |IdentifierName| contained in |GroupName|.
+      1. Search the enclosing RegExp for an instance of a |GroupSpecifier| for an |RegExpIdentifierName| which has a StringValue equal to the StringValue of the |RegExpIdentifierName| contained in |GroupName|.
       1. Assert: A unique such |GroupSpecifier| is found.
       1. Let _parenIndex_ be the number of left capturing parentheses in the entire regular expression that occur to the left of the located |GroupSpecifier|. This is the total number of times the <emu-grammar>Atom :: `(` GroupSpecifier Disjunction `)`</emu-grammar> production is expanded prior to that production's |Term| plus the total number of <emu-grammar>Atom :: `(` GroupSpecifier Disjunction `)`</emu-grammar> productions enclosing this |Term|.
       1. Call BackreferenceMatcher(_parenIndex_) and return its Matcher result.
@@ -173,7 +217,7 @@ contributors: Daniel Ehrenberg
         1. Let _capturedValue_ be a string consisting of the code units of _captureI_.
       1. Perform ! CreateDataProperty(_A_, ! ToString(_i_), _capturedValue_).
       1. <ins>If the _i_th capture of _R_ was defined with a |GroupName|,</ins>
-        1. <ins>Let _s_ be the StringValue of the corresponding |IdentifierName|.</ins>
+        1. <ins>Let _s_ be the StringValue of the corresponding |RegExpIdentifierName|.</ins>
         1. <ins>Perform ! CreateDataProperty(_groups_, _s_, _capturedValue_).</ins>
     1. Return _A_.
   </emu-alg>
