@@ -38,7 +38,7 @@ contributors: Daniel Ehrenberg
 
         RegExpIdentifierName[U] ::
           RegExpIdentifierStart[?U]
-          RegExpIdentifierName[U] RegExpIdentifierPart[?U]
+          RegExpIdentifierName[?U] RegExpIdentifierPart[?U]
 
         RegExpIdentifierStart[U] ::
           UnicodeIDStart
@@ -70,7 +70,7 @@ contributors: Daniel Ehrenberg
     <emu-grammar>AtomEscape[U] :: [+N] `k` GroupName</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |IdentiferName| whose StringValue equals the StringValue of the |RegExpIdentifierName| of this production's |GroupName|.
+        It is a Syntax Error if the enclosing RegExp does not contain a |GroupSpecifier| with an enclosed |RegExpIdentifierName| whose StringValue equals the StringValue of the |RegExpIdentifierName| of this production's |GroupName|.
       </li>
     </ul>
 
