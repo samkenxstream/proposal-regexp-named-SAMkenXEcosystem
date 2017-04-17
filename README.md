@@ -122,3 +122,8 @@ Ruby's syntax is identical to .NET, with named capture groups with the syntax `"
 ## Draft specification
 
 [Draft spec](https://tc39.github.io/proposal-regexp-named-groups/)
+
+## Implementations
+
+* [V8](https://bugs.chromium.org/p/v8/issues/detail?id=5437) with the `--harmony-regexp-named-captures` flag set
+* [Transpiler (Babel plugin)](https://github.com/DmitrySoshnikov/babel-plugin-transform-modern-regexp#named-capturing-groups)
