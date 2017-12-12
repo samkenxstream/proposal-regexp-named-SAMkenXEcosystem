@@ -111,7 +111,7 @@ contributors: Daniel Ehrenberg
         1. Let _s_ be _cap_[_n_].
         1. If _s_ is *undefined*, return _c_(_x_).
         1. Let _e_ be _x_'s _endIndex_.
-        1. Let _len_ be _s_'s length.
+        1. Let _len_ be the number of elements in _s_.
         1. Let _f_ be _e_+_len_.
         1. If _f_&gt;_InputLength_, return ~failure~.
         1. If there exists an integer _i_ between 0 (inclusive) and _len_ (exclusive) such that Canonicalize(_s_[_i_]) is not the same character value as Canonicalize(_Input_[_e_+_i_]), return ~failure~.
@@ -126,7 +126,7 @@ contributors: Daniel Ehrenberg
   <ins class="block">
   <p>The production <emu-grammar>AtomEscape[U] :: [+N] `k` GroupName</emu-grammar> evaluates as follows:</p>
   <emu-alg>
-      1. Search the enclosing RegExp for an instance of a |GroupSpecifier| for an |RegExpIdentifierName| which has a StringValue equal to the StringValue of the |RegExpIdentifierName| contained in |GroupName|.
+      1. Search the enclosing RegExp for an instance of a |GroupSpecifier| for a |RegExpIdentifierName| which has a StringValue equal to the StringValue of the |RegExpIdentifierName| contained in |GroupName|.
       1. Assert: A unique such |GroupSpecifier| is found.
       1. Let _parenIndex_ be the number of left capturing parentheses in the entire regular expression that occur to the left of the located |GroupSpecifier|. This is the total number of times the <emu-grammar>Atom :: `(` GroupSpecifier Disjunction `)`</emu-grammar> production is expanded prior to that production's |Term| plus the total number of <emu-grammar>Atom :: `(` GroupSpecifier Disjunction `)`</emu-grammar> productions enclosing this |Term|.
       1. Call BackreferenceMatcher(_parenIndex_) and return its Matcher result.
